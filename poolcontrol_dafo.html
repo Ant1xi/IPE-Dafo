@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoolControl · Análisis DAFO</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #1B3A5C;
+    --navy2:  #0d2540;
+    --teal:   #2AB4A0;
+    --teal2:  #1d8a7a;
+    --white:  #ffffff;
+    --off:    #f7f9fc;
+    --card:   #ffffff;
+    --border: #e2e8f0;
+    --text:   #1a202c;
+    --muted:  #64748b;
+    --light:  #f1f5f9;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--off);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HERO ─────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy2) 0%, var(--navy) 60%, #1e4d6b 100%);
+    padding: 60px 24px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(42,180,160,0.12) 0%, transparent 65%);
+    top: -200px; right: -100px;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(42,180,160,0.08) 0%, transparent 65%);
+    bottom: -150px; left: -50px;
+    pointer-events: none;
+  }
+  .logo-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .logo-box {
+    width: 60px; height: 60px;
+    background: var(--white);
+    border: 3px solid var(--teal);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 700; color: var(--navy);
+  }
+  .logo-text {
+    font-size: 32px; font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.5px;
+  }
+  .hero-subtitle {
+    font-size: 15px; font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .hero-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+    margin-bottom: 24px;
+    max-width: 500px;
+    margin-left: auto; margin-right: auto;
+    position: relative;
+  }
+  .badge-row {
+    display: flex; justify-content: center;
+    gap: 8px; flex-wrap: wrap;
+    position: relative;
+  }
+  .badge {
+    background: rgba(42,180,160,0.15);
+    border: 1px solid rgba(42,180,160,0.35);
+    color: var(--teal);
+    font-size: 12px; font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 30px;
+  }
+
+  /* ─── CONTENEDOR ─────────────────────── */
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  /* ─── STATS ─────────────────────────── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .stat-n {
+    font-size: 36px; font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-l {
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* ─── SECCIÓN TITLE ─────────────────── */
+  .section-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── DAFO GRID ─────────────────────── */
+  .dafo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .quadrant {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .quadrant:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .q-header {
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid transparent;
+  }
+  .q-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .q-title { font-size: 14px; font-weight: 600; }
+  .q-count {
+    margin-left: auto;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  /* Colores por cuadrante */
+  .qf .q-header { background: #edfaf7; border-color: #c5ede6; }
+  .qf .q-icon   { background: var(--teal); color: #fff; }
+  .qf .q-title  { color: #0a5c4e; }
+  .qf .q-count  { background: #cff0ea; color: #0a5c4e; }
+
+  .qo .q-header { background: #eef4fd; border-color: #c3d8f7; }
+  .qo .q-icon   { background: #2563EB; color: #fff; }
+  .qo .q-title  { color: #1e3a8a; }
+  .qo .q-count  { background: #dbeafe; color: #1e3a8a; }
+
+  .qd .q-header { background: #fff8ed; border-color: #fdd9aa; }
+  .qd .q-icon   { background: #F59E0B; color: #fff; }
+  .qd .q-title  { color: #78350f; }
+  .qd .q-count  { background: #fde68a; color: #78350f; }
+
+  .qa .q-header { background: #fff0f0; border-color: #fec9c9; }
+  .qa .q-icon   { background: #EF4444; color: #fff; }
+  .qa .q-title  { color: #7f1d1d; }
+  .qa .q-count  { background: #fecaca; color: #7f1d1d; }
+
+  /* Items dentro del cuadrante */
+  .q-items { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+
+  .q-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .q-item:hover { background: var(--light); }
+  .q-item.active { background: var(--light); border-color: var(--border); }
+
+  .q-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-top: 5px; flex-shrink: 0;
+  }
+  .qf .q-dot { background: var(--teal); }
+  .qo .q-dot { background: #2563EB; }
+  .qd .q-dot { background: #F59E0B; }
+  .qa .q-dot { background: #EF4444; }
+
+  .q-item-text { font-size: 13px; line-height: 1.45; color: var(--text); }
+  .q-item-arrow {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 12px; color: var(--muted);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .q-item:hover .q-item-arrow, .q-item.active .q-item-arrow { opacity: 1; }
+
+  /* ─── PANEL DETALLE ──────────────────── */
+  .detail-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .detail-panel.visible { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .detail-top {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .detail-badge {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .detail-item-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .detail-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ─── ESTRATEGIAS ────────────────────── */
+  .estrategias {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .e-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .e-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+  .e-pill {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .e-ofensiva   .e-pill { background: #dbeafe; color: #1e3a8a; }
+  .e-adaptativa .e-pill { background: #fde68a; color: #78350f; }
+  .e-defensiva  .e-pill { background: #d1fae5; color: #064e3b; }
+  .e-superv     .e-pill { background: #fecaca; color: #7f1d1d; }
+  .e-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .e-card p  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ─── DESCRIPCION FINAL ──────────────── */
+  .desc-box {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e4d6b 100%);
+    border-radius: 14px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .desc-box::before {
+    content: '"';
+    position: absolute;
+    font-size: 180px; font-weight: 700;
+    color: rgba(42,180,160,0.1);
+    top: -30px; right: 20px;
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+  .desc-box p {
+    font-size: 14px; color: rgba(255,255,255,0.72);
+    line-height: 1.8; font-style: italic;
+    position: relative;
+  }
+  .desc-box strong { color: var(--teal); font-style: normal; }
+
+  /* ─── FOOTER ─────────────────────────── */
+  footer {
+    background: var(--navy2);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    font-size: 12px;
+    padding: 20px;
+  }
+  footer span { color: var(--teal); }
+
+  /* ─── RESPONSIVE ─────────────────────── */
+  @media(max-width: 600px) {
+    .stats, .dafo-grid, .estrategias { grid-template-columns: 1fr; }
+    .logo-text { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="logo-wrap">
+    <div class="logo-box">P</div>
+    <div class="logo-text">PoolControl</div>
+  </div>
+  <p class="hero-subtitle">Análisis DAFO · Diagnóstico Estratégico</p>
+  <p class="hero-desc">Servicio web de gestión de piscinas en comunidades de vecinos</p>
+  <div class="badge-row">
+    <span class="badge">📊 Diagnóstico estratégico</span>
+    <span class="badge">📅 Mayo 2026</span>
+    <span class="badge">👤 Antonio Castro Guerrero</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n" style="color:var(--teal)">4</div>
+      <div class="stat-l">Fortalezas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#F59E0B">4</div>
+      <div class="stat-l">Debilidades</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#2563EB">4</div>
+      <div class="stat-l">Oportunidades</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#EF4444">4</div>
+      <div class="stat-l">Amenazas</div>
+    </div>
+  </div>
+
+  <!-- MATRIZ -->
+  <div class="section-label">Matriz de factores · haz clic en cada punto para ver el detalle</div>
+
+  <div class="dafo-grid">
+
+    <div class="quadrant qf">
+      <div class="q-header">
+        <div class="q-icon">✓</div>
+        <span class="q-title">Fortalezas</span>
+        <span class="q-count">4</span>
+      </div>
+      <div class="q-items" id="items-f"></div>
+    </div>
+
+    <div class="quadrant qo">
+      <div class="q-header">
+        <div class="q-icon">↑</div>
+        <span class="q-title">Oportunidades</span>
+        <span class="q-count">4</span>
+      </div>
+      <div class="q-items" id="items-o"></div>
+    </div>
+
+    <div class="quadrant qd">
+      <div class="q-header">
+        <div class="q-icon">!</div>
+        <span class="q-title">Debilidades</span>
+        <span class="q-count">4</span>
+      </div>
+      <div class="q-items" id="items-d"></div>
+    </div>
+
+    <div class="quadrant qa">
+      <div class="q-header">
+        <div class="q-icon">⚡</div>
+        <span class="q-title">Amenazas</span>
+        <span class="q-count">4</span>
+      </div>
+      <div class="q-items" id="items-a"></div>
+    </div>
+
+  </div>
+
+  <!-- PANEL DETALLE -->
+  <div class="detail-panel" id="detail">
+    <div class="detail-top">
+      <span class="detail-badge" id="det-badge"></span>
+      <span class="detail-item-name" id="det-name"></span>
+    </div>
+    <p class="detail-text" id="det-text"></p>
+  </div>
+
+  <!-- ESTRATEGIAS -->
+  <div class="section-label">Estrategias derivadas del DAFO</div>
+
+  <div class="estrategias">
+    <div class="e-card e-ofensiva">
+      <span class="e-pill">Ofensiva · F+O</span>
+      <h3>Comodidad digital</h3>
+      <p>Aprovechar la creciente digitalización en comunidades para posicionar PoolControl como sustituto moderno del papel, WhatsApp y la memoria verbal del socorrista.</p>
+    </div>
+    <div class="e-card e-adaptativa">
+      <span class="e-pill">Adaptativa · D+O</span>
+      <h3>Colaboración sectorial</h3>
+      <p>Buscar acuerdos con empresas de socorrismo y administradores de fincas para conseguir los primeros clientes y reducir el riesgo inicial del proyecto.</p>
+    </div>
+    <div class="e-card e-defensiva">
+      <span class="e-pill">Defensiva · F+A</span>
+      <h3>Originalidad y nicho</h3>
+      <p>Diferenciarse especializándose exclusivamente en piscinas comunitarias para evitar la competencia directa con apps de gestión general que tienen más recursos.</p>
+    </div>
+    <div class="e-card e-superv">
+      <span class="e-pill">Supervivencia · D+A</span>
+      <h3>Feedback continuo</h3>
+      <p>Aprovechar el conocimiento directo del sector para iterar rápido sobre el producto y adaptarlo a las necesidades reales antes de que aparezcan competidores.</p>
+    </div>
+  </div>
+
+  <!-- DESCRIPCIÓN -->
+  <div class="section-label">Sobre el proyecto</div>
+  <div class="desc-box">
+    <p><strong>PoolControl</strong> nace de un problema real observado de primera mano como socorrista: la gestión diaria de piscinas comunitarias sigue dependiendo de listas en papel, grupos de WhatsApp y la memoria verbal del socorrista. La plataforma web centraliza el control de accesos, la asignación de socorristas y el registro de incidencias — todo en un único sistema digital, accesible desde móvil, tablet u ordenador.</p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>PoolControl</span> · Proyecto Emprendedor IPE2 · 2º DAW · Mayo 2026 · Antonio Castro Guerrero
+</footer>
+
+<script>
+var DATA = {
+  f: {
+    label: "Fortaleza",
+    badgeStyle: "background:#cff0ea;color:#0a5c4e",
+    items: [
+      {
+        short: "Problema real y conocido",
+        detail: "La idea nace de un problema que ocurre cada verano en miles de comunidades: sin control digital, los accesos, incidencias y turnos de socorristas se gestionan de forma caótica. El fundador lo ha vivido en primera persona como socorrista."
+      },
+      {
+        short: "Solución digital superior",
+        detail: "PoolControl sustituye métodos ineficientes como listas en papel, grupos de WhatsApp y comunicaciones verbales por un sistema centralizado, trazable y accesible desde cualquier dispositivo."
+      },
+      {
+        short: "Conocimiento de primera mano",
+        detail: "El fundador ha trabajado como socorrista y conoce el flujo de trabajo real: qué datos se necesitan, cuándo y cómo. Esto permite diseñar una solución que realmente encaja con el usuario final."
+      },
+      {
+        short: "Especialización en piscinas",
+        detail: "A diferencia de apps de gestión general, PoolControl está diseñada exclusivamente para piscinas comunitarias. Esa especialización es una ventaja de nicho difícil de replicar rápidamente."
+      }
+    ]
+  },
+  o: {
+    label: "Oportunidad",
+    badgeStyle: "background:#dbeafe;color:#1e3a8a",
+    items: [
+      {
+        short: "Nicho prácticamente vacío",
+        detail: "Hay muy pocas soluciones digitales específicas para la gestión de piscinas comunitarias. El mercado está prácticamente sin competidores directos especializados, lo que facilita el posicionamiento."
+      },
+      {
+        short: "Demanda real y recurrente",
+        detail: "Las comunidades de vecinos y empresas de socorrismo necesitan mejorar el control de accesos cada temporada de verano. La demanda es real, recurrente y no está cubierta digitalmente."
+      },
+      {
+        short: "Ola de digitalización",
+        detail: "La digitalización de servicios en comunidades de vecinos está en auge. Hay una predisposición creciente a adoptar tecnología para simplificar la gestión, lo que reduce la barrera de adopción."
+      },
+      {
+        short: "Alianzas con el sector",
+        detail: "Empresas de socorrismo y administradores de fincas pueden actuar como socios distribuidores, facilitando el acceso al mercado sin necesidad de un equipo comercial propio en la fase inicial."
+      }
+    ]
+  },
+  d: {
+    label: "Debilidad",
+    badgeStyle: "background:#fde68a;color:#78350f",
+    items: [
+      {
+        short: "Sin marca ni clientes aún",
+        detail: "Al ser un proyecto nuevo, no existe reconocimiento de marca ni una base de clientes que respalde la propuesta. La confianza hay que construirla desde cero, lo que requiere tiempo y esfuerzo comercial."
+      },
+      {
+        short: "Sin experiencia empresarial previa",
+        detail: "Es el primer proyecto empresarial del fundador, lo que implica curva de aprendizaje en áreas como gestión, contabilidad, ventas y atención al cliente."
+      },
+      {
+        short: "Capital inicial limitado",
+        detail: "El plan de inversiones asciende a 3.435 € con financiación mixta (aportaciones propias, crowdfunding, aplazamiento y préstamo ICO). La escasez de capital limita el ritmo de desarrollo y marketing."
+      },
+      {
+        short: "El desarrollo lleva tiempo",
+        detail: "Construir, probar y mejorar el software requiere meses de trabajo. Durante ese período, el producto puede no ser suficientemente maduro para competir con alternativas aunque sean más genéricas."
+      }
+    ]
+  },
+  a: {
+    label: "Amenaza",
+    badgeStyle: "background:#fecaca;color:#7f1d1d",
+    items: [
+      {
+        short: "Resistencia al cambio",
+        detail: "Algunas comunidades y administradores prefieren mantener sus métodos actuales por comodidad o desconfianza hacia la tecnología nueva. Convencerles requiere demostración práctica y paciencia."
+      },
+      {
+        short: "Cambios normativos",
+        detail: "Modificaciones en la normativa de protección de datos (RGPD) o en la regulación de accesos pueden obligar a adaptar el producto con coste y tiempo añadidos, especialmente en la fase de arranque."
+      },
+      {
+        short: "Grandes tecnológicas con más recursos",
+        detail: "Empresas tecnológicas con más capital y equipo podrían entrar en el nicho, con mayor capacidad de desarrollo, marketing y soporte, haciendo muy difícil competir en precio o funcionalidades."
+      },
+      {
+        short: "Aparición de apps similares",
+        detail: "El éxito del concepto puede atraer imitadores rápidamente. Si el producto no está suficientemente maduro y posicionado cuando aparezcan, puede perder cuota de mercado antes de consolidarse."
+      }
+    ]
+  }
+};
+
+var activeItem = null;
+
+function buildItems(key) {
+  var q = DATA[key];
+  var container = document.getElementById('items-' + key);
+  q.items.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'q-item';
+    el.innerHTML =
+      '<div class="q-dot"></div>' +
+      '<div class="q-item-text">' + item.short + '</div>' +
+      '<span class="q-item-arrow">›</span>';
+
+    el.addEventListener('click', function() {
+      if (activeItem === el) {
+        el.classList.remove('active');
+        document.getElementById('detail').classList.remove('visible');
+        activeItem = null;
+        return;
+      }
+      document.querySelectorAll('.q-item').forEach(function(x){ x.classList.remove('active'); });
+      el.classList.add('active');
+      activeItem = el;
+
+      var panel = document.getElementById('detail');
+      var badge = document.getElementById('det-badge');
+      var name  = document.getElementById('det-name');
+      var text  = document.getElementById('det-text');
+
+      badge.textContent = q.label;
+      badge.style.cssText = q.badgeStyle + ';font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.8px';
+      name.textContent  = item.short;
+      text.textContent  = item.detail;
+
+      panel.classList.remove('visible');
+      void panel.offsetWidth;
+      panel.classList.add('visible');
+
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    container.appendChild(el);
+  });
+}
+
+['f', 'o', 'd', 'a'].forEach(buildItems);
+</script>
+</body>
+</html>
